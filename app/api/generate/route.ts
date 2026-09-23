@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { checkCards } from "@/lib/checkCards";
+import { isRateLimited } from "@/lib/rateLimit";
 
 // making the cards can take a while, so give the function up to 60s on vercel
 export const maxDuration = 60;
@@ -35,6 +36,15 @@ const cardsSchema = {
 };
 
 export async function POST(req: Request) {
+  // vercel puts the visitor's IP address in this header
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "You're making cards too fast. Wait a minute and try again." },
+      { status: 429 }
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const notes = typeof body?.notes === "string" ? body.notes.trim() : "";
 
