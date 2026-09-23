@@ -1,15 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import type { Card } from "@/lib/checkCards";
 
 const MAX_LENGTH = 15000;
 
 export default function Home() {
   const [notes, setNotes] = useState("");
+  const [cards, setCards] = useState<Card[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: send notes to the api
+    setLoading(true);
+    setError("");
+    setCards([]);
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Try again.");
+      } else {
+        setCards(data.cards);
+      }
+    } catch {
+      setError("Couldn't reach the server. Check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -35,13 +60,33 @@ export default function Home() {
           </span>
           <button
             type="submit"
-            disabled={!notes.trim()}
+            disabled={loading || !notes.trim()}
             className="rounded-lg bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Make flashcards
+            {loading ? "Making flashcards..." : "Make flashcards"}
           </button>
         </div>
       </form>
+
+      {error && (
+        <p role="alert" className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+          {error}
+        </p>
+      )}
+
+      {cards.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-semibold">{cards.length} flashcards</h2>
+          <ul className="mt-4 space-y-3">
+            {cards.map((card, i) => (
+              <li key={i} className="rounded-lg border border-slate-200 bg-white p-4">
+                <p className="font-medium">{card.question}</p>
+                <p className="mt-1 text-slate-600">{card.answer}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </main>
   );
 }
