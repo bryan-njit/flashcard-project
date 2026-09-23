@@ -2,6 +2,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { checkCards } from "@/lib/checkCards";
 
+// making the cards can take a while, so give the function up to 60s on vercel
+export const maxDuration = 60;
+
 const MODEL = "claude-opus-5";
 const MAX_NOTES_LENGTH = 15000;
 
