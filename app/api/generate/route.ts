@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { checkCards } from "@/lib/checkCards";
 
 const MODEL = "claude-opus-5";
 const MAX_NOTES_LENGTH = 15000;
@@ -108,6 +109,12 @@ export async function POST(req: Request) {
       { error: "Claude's response wasn't valid JSON. Try again." },
       { status: 502 }
     );
+  }
+
+  // don't trust the response just because it's JSON
+  const problem = checkCards(data);
+  if (problem) {
+    return NextResponse.json({ error: problem }, { status: 502 });
   }
 
   return NextResponse.json({ cards: data.cards });
