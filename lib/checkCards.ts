@@ -5,9 +5,7 @@ export type Card = {
 
 // Makes sure Claude gave back a list of cards and every card has a question and an answer.
 // Returns an error message if something is wrong, or null if the cards look good.
-export function checkCards(data: unknown): string | null {
-  const cards = (data as { cards?: unknown } | null)?.cards;
-
+export function checkCards(cards: unknown): string | null {
   if (!Array.isArray(cards)) {
     return "Claude didn't send back a list of cards.";
   }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Flashcard from "@/components/Flashcard";
 import type { Card } from "@/lib/checkCards";
 
-const MAX_LENGTH = 15000;
+const MAX_NOTES_LENGTH = 15000;
 
 export default function Home() {
   const [notes, setNotes] = useState("");
@@ -50,14 +50,14 @@ export default function Home() {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Paste your notes here..."
-          maxLength={MAX_LENGTH}
+          maxLength={MAX_NOTES_LENGTH}
           rows={12}
           className="w-full resize-y rounded-xl border border-slate-300 bg-white p-4 shadow-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
         />
 
         <div className="mt-3 flex items-center justify-between gap-4">
           <span className="text-sm text-slate-500">
-            {notes.length} / {MAX_LENGTH} characters
+            {notes.length} / {MAX_NOTES_LENGTH} characters
           </span>
           <button
             type="submit"

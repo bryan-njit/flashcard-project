@@ -125,7 +125,7 @@ export async function POST(req: Request) {
   }
 
   // don't trust the response just because it's JSON
-  const problem = checkCards(data);
+  const problem = checkCards(data?.cards);
   if (problem) {
     return NextResponse.json({ error: problem }, { status: 502 });
   }
