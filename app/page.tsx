@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Flashcard from "@/components/Flashcard";
 import type { Card } from "@/lib/checkCards";
 
 const MAX_LENGTH = 15000;
@@ -77,14 +78,11 @@ export default function Home() {
       {cards.length > 0 && (
         <section className="mt-10">
           <h2 className="text-xl font-semibold">{cards.length} flashcards</h2>
-          <ul className="mt-4 space-y-3">
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card, i) => (
-              <li key={i} className="rounded-lg border border-slate-200 bg-white p-4">
-                <p className="font-medium">{card.question}</p>
-                <p className="mt-1 text-slate-600">{card.answer}</p>
-              </li>
+              <Flashcard key={i} question={card.question} answer={card.answer} />
             ))}
-          </ul>
+          </div>
         </section>
       )}
     </main>
